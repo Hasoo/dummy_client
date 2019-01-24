@@ -3,7 +3,6 @@ package com.hasoo.sample.dummyclient.netty;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 import com.hasoo.sample.dummyclient.util.Util;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -24,7 +23,7 @@ public class UmgpClientHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-    log.info("connected->{}", ctx.toString());
+    log.debug(ctx.toString());
     super.channelRegistered(ctx);
   }
 
@@ -46,6 +45,12 @@ public class UmgpClientHandler extends ChannelInboundHandlerAdapter {
   }
 
   @Override
+  public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    log.info("connection established {}", ctx.toString());
+    super.channelActive(ctx);
+  }
+
+  @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     log.info("connection closed {}", ctx.toString());
     // log.info("connection closed {}", umgpWorker.who(ctx.channel()));
@@ -54,7 +59,7 @@ public class UmgpClientHandler extends ChannelInboundHandlerAdapter {
 
       @Override
       public void run() {
-        umgpClient.setup(new Bootstrap(), eventLoop);
+        umgpClient.setup(eventLoop);
       }
     }, 1L, TimeUnit.SECONDS);
 

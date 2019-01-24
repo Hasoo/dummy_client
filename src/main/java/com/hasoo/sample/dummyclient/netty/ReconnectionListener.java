@@ -24,7 +24,8 @@ public class ReconnectionListener implements ChannelFutureListener {
 
         @Override
         public void run() {
-          umgpClient.setup(new Bootstrap(), eventLoop);
+          future.channel().close();
+          umgpClient.setup(eventLoop);
         }
       }, 1L, TimeUnit.SECONDS);
     }
