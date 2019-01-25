@@ -17,7 +17,7 @@ public class App {
     // UmgpClient umgpReceiverClient = new UmgpClient("127.0.0.1", 4000);
     MessageConsumer messageConsumer =
         MessageConsumer.builder().ip("127.0.0.1").port(5672).username("test").password("test")
-            .exchangeName("amq.direct").routingKey("batch").queueName("test").build();
+            .exchangeName("amq.direct").routingKey("batch").queueName("LGT_1").build();
     try {
       // umgpSenderClient.connect();
       // umgpReceiverClient.connect();

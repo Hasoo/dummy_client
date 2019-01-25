@@ -4,10 +4,16 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hasoo.sample.dummyclient.que.SenderQue;
 import com.hasoo.sample.dummyclient.rabbitmq.CallbackReceiveEvent;
 import com.hasoo.sample.dummyclient.rabbitmq.MessageConsumer;
+import com.hasoo.sample.dummyclient.util.Util;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public abstract class MessageSender {
+  private ObjectMapper mapper = new ObjectMapper();
   private MessageConsumer messageConsumer;
   private HashMap<String, String> props;
   private boolean idle = true;
@@ -25,9 +31,10 @@ public abstract class MessageSender {
 
   public abstract void sendPing();
 
-  public abstract boolean send(String contentType, String contentEncoding, String message);
+  public abstract boolean send(String contentType, String contentEncoding, SenderQue que);
 
   public void work() throws InterruptedException, IOException {
+
     setup();
 
     messageConsumer.connect();
@@ -35,7 +42,15 @@ public abstract class MessageSender {
 
       @Override
       public boolean receive(String contentType, String contentEncoding, String message) {
-        return send(contentType, contentEncoding, message);
+
+        SenderQue que = null;
+        try {
+          que = mapper.readValue(message, SenderQue.class);
+        } catch (IOException e) {
+          log.error(Util.getStackTrace(e));
+        }
+        idle = false;
+        return send(contentType, contentEncoding, que);
       }
     });
 
@@ -49,6 +64,9 @@ public abstract class MessageSender {
           sendPing();
           preTime = curTime;
         }
+      } else {
+        idle = true;
+        preTime = Instant.now();
       }
 
       Thread.sleep(100);
