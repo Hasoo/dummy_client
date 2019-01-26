@@ -1,44 +1,48 @@
 package com.hasoo.sample.dummyclient;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import com.hasoo.sample.dummyclient.netty.UmgpClient;
-import com.hasoo.sample.dummyclient.rabbitmq.CallbackReceiveEvent;
 import com.hasoo.sample.dummyclient.rabbitmq.MessageConsumer;
-import com.hasoo.sample.dummyclient.util.Util;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Hello world!
- *
- */
 @Slf4j
 public class App {
   public static void main(String[] args) {
-    // UmgpClient umgpSenderClient = new UmgpClient("127.0.0.1", 4000);
-    // UmgpClient umgpReceiverClient = new UmgpClient("127.0.0.1", 4000);
-    MessageConsumer messageConsumer =
-        MessageConsumer.builder().ip("127.0.0.1").port(5672).username("test").password("test")
-            .exchangeName("amq.direct").routingKey("batch").queueName("LGT_1").build();
-    try {
-      // umgpSenderClient.connect();
-      // umgpReceiverClient.connect();
-      while (true != messageConsumer.connect()) {
-        Thread.sleep(1000);
-      }
-      messageConsumer.consume(new CallbackReceiveEvent() {
+    ExecutorService executor = Executors.newCachedThreadPool();
 
-        @Override
-        public boolean receive(String contentType, String contentEncoding, String message) {
-          log.debug("content_type:{} content_encoding:{} messae:{}", contentType, contentEncoding,
-              message);
-          return true;
-        }
-      });
-      Thread.sleep(100000);
-    } catch (Exception e) {
-      log.error(Util.getStackTrace(e));
+    UmgpClient umgpClient_1 = UmgpClient.builder().ip("127.0.0.1").port(4000).build();
+
+    /* @formatter:off */
+    MessageConsumer messageConsumer_1 = MessageConsumer.builder()
+        .ip("127.0.0.1")
+        .port(5672)
+        .username("test")
+        .password("test")
+        .queueName("LGT_1")
+        .build();
+    /* @formatter:on */
+
+    // MessageSender messageSender_1 = new MessageSender(messageConsumer_1);
+
+    // executor.execute(new MessageSenderTask(umgpClient_1, messageSender_1);
+
+    try {
+      log.debug("attempt to shutdown executor");
+
+      // messageSender.stop();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      log.error("tasks interrupted");
     } finally {
-      // umgpSenderClient.shutdown();
-      // umgpReceiverClient.shutdown();
+      if (!executor.isTerminated()) {
+        log.debug("cancel non-finished tasks");
+      }
+      executor.shutdownNow();
+      umgpClient_1.shutdown();
+      log.debug("shutdown finished");
     }
   }
 }

@@ -2,14 +2,10 @@ package com.hasoo.sample.dummyclient.netty;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
-import com.hasoo.sample.dummyclient.util.Util;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -18,20 +14,16 @@ import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.LineEncoder;
 import io.netty.handler.codec.string.LineSeparator;
 import io.netty.handler.timeout.ReadTimeoutHandler;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class UmgpClient {
   private EventLoopGroup clientGroup = new NioEventLoopGroup();
   private Channel clientChannel = null;
   private String ip;
   private int port;
 
-  public UmgpClient() {}
-
-  public UmgpClient(String ip, int port) {
-    this.ip = ip;
-    this.port = port;
+  private UmgpClient(UmgpClientBuilder builder) {
+    this.ip = builder.ip;
+    this.port = builder.port;
   }
 
   public void connect() {
@@ -77,5 +69,28 @@ public class UmgpClient {
       return false;
     }
     return true;
+  }
+
+  public static UmgpClientBuilder builder() {
+    return new UmgpClientBuilder();
+  }
+
+  public static class UmgpClientBuilder {
+    private String ip;
+    private int port;
+
+    public UmgpClientBuilder ip(String ip) {
+      this.ip = ip;
+      return this;
+    }
+
+    public UmgpClientBuilder port(int port) {
+      this.port = port;
+      return this;
+    }
+
+    public UmgpClient build() {
+      return new UmgpClient(this);
+    }
   }
 }

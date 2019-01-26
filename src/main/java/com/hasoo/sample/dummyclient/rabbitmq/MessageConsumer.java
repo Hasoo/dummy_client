@@ -17,8 +17,6 @@ public class MessageConsumer {
   private int port;
   private String username;
   private String password;
-  private String exchangeName;
-  private String routingKey;
   private String queueName;
 
   private ConnectionFactory connectionFactory = new ConnectionFactory();
@@ -29,8 +27,6 @@ public class MessageConsumer {
     this.port = builder.port;
     this.username = builder.username;
     this.password = builder.password;
-    this.exchangeName = builder.exchangeName;
-    this.routingKey = builder.routingKey;
     this.queueName = builder.queueName;
 
     connectionFactory.setHost(ip);
@@ -78,8 +74,6 @@ public class MessageConsumer {
     private int port;
     private String username;
     private String password;
-    private String exchangeName;
-    private String routingKey;
     private String queueName;
 
     public MessageConsumerBuilder ip(String ip) {
@@ -99,16 +93,6 @@ public class MessageConsumer {
 
     public MessageConsumerBuilder password(String password) {
       this.password = password;
-      return this;
-    }
-
-    public MessageConsumerBuilder exchangeName(String exchangeName) {
-      this.exchangeName = exchangeName;
-      return this;
-    }
-
-    public MessageConsumerBuilder routingKey(String routingKey) {
-      this.routingKey = routingKey;
       return this;
     }
 
