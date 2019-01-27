@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hasoo.sample.dummyclient.dto.SenderQue;
+import com.hasoo.sample.dummyclient.netty.UmgpClient;
 import com.hasoo.sample.dummyclient.rabbitmq.CallbackReceiveEvent;
 import com.hasoo.sample.dummyclient.rabbitmq.MessageConsumer;
 import com.hasoo.sample.dummyclient.util.Util;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class MessageSender {
   private ObjectMapper mapper = new ObjectMapper();
+  private UmgpClient umgpClient;
   private MessageConsumer messageConsumer;
   private HashMap<String, String> props;
   private boolean idle = true;
@@ -23,7 +25,8 @@ public abstract class MessageSender {
   @SuppressWarnings("unused")
   private MessageSender() {}
 
-  public MessageSender(MessageConsumer messageConsumer) {
+  public MessageSender(UmgpClient umgpClient, MessageConsumer messageConsumer) {
+    this.umgpClient = umgpClient;
     this.messageConsumer = messageConsumer;
   }
 
@@ -39,12 +42,14 @@ public abstract class MessageSender {
 
   public abstract void sendPing();
 
-  public abstract boolean send(String contentType, String contentEncoding, SenderQue que);
+  public abstract boolean sendMessage(String contentType, String contentEncoding, SenderQue que);
+
+  public void connect() {
+    umgpClient.connect();
+  }
 
   public boolean work() {
     try {
-      setup();
-
       if (true != startConsumer()) {
         return true;
       }
@@ -86,9 +91,10 @@ public abstract class MessageSender {
           que = mapper.readValue(message, SenderQue.class);
         } catch (IOException e) {
           log.error(Util.getStackTrace(e));
+          return true; // NACK for deleting
         }
         idle = false;
-        return send(contentType, contentEncoding, que);
+        return sendMessage(contentType, contentEncoding, que);
       }
     });
 

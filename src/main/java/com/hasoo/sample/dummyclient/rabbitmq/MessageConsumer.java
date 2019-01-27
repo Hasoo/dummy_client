@@ -50,8 +50,8 @@ public class MessageConsumer {
   }
 
   public void consume(CallbackReceiveEvent event) throws IOException {
-    // boolean autoAck = false;
-    boolean autoAck = true;
+    boolean autoAck = false;
+    // boolean autoAck = true;
     channel.basicConsume(queueName, autoAck, new DefaultConsumer(channel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope,

@@ -5,6 +5,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import com.hasoo.sample.dummyclient.netty.UmgpClient;
 import com.hasoo.sample.dummyclient.rabbitmq.MessageConsumer;
+import com.hasoo.sample.dummyclient.service.MessageSender;
+import com.hasoo.sample.dummyclient.service.MessageSenderTask;
+import com.hasoo.sample.dummyclient.umgp.UmgpMessageSender;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,9 +27,16 @@ public class App {
         .build();
     /* @formatter:on */
 
-    // MessageSender messageSender_1 = new MessageSender(messageConsumer_1);
+    MessageSender messageSender_1 = new UmgpMessageSender(umgpClient_1, messageConsumer_1);
+    // messageSender_1.setProperty(props);
+    messageSender_1.setup();
 
-    // executor.execute(new MessageSenderTask(umgpClient_1, messageSender_1);
+    executor.execute(new MessageSenderTask(messageSender_1));
+
+    try {
+      TimeUnit.SECONDS.sleep(60 * 10);
+    } catch (InterruptedException e) {
+    }
 
     try {
       log.debug("attempt to shutdown executor");
