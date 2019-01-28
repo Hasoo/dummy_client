@@ -1,4 +1,4 @@
-package com.hasoo.sample.dummyclient.util;
+package com.hasoo.message.dummyclient.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

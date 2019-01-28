@@ -1,4 +1,4 @@
-package com.hasoo.sample.dummyclient.umgp;
+package com.hasoo.message.dummyclient.umgp;
 
 import lombok.Data;
 
@@ -93,6 +93,8 @@ public class Umgp {
       ret = HType.CONNECT;
     } else if (umgpMethod.equals(SEND)) {
       ret = HType.SEND;
+    } else if (umgpMethod.equals(REPORT)) {
+      ret = HType.REPORT;
     } else if (umgpMethod.equals(MMS)) {
       ret = HType.MMS;
     } else if (umgpMethod.equals(PING)) {

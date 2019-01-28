@@ -1,10 +1,10 @@
-package com.hasoo.sample.dummyclient;
+package com.hasoo.message.dummyclient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import com.hasoo.sample.dummyclient.umgp.Umgp;
+import com.hasoo.message.dummyclient.umgp.Umgp;
 
 public class UmgpTest {
   private Umgp umgp = new Umgp();

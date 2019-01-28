@@ -1,4 +1,4 @@
-package com.hasoo.sample.dummyclient.dto;
+package com.hasoo.message.dummyclient.dto;
 
 import java.util.Date;
 import java.util.List;
@@ -20,6 +20,10 @@ public class SenderQue {
   private String phone;
   private String callback;
   private String message;
+  private String code;
+  private String desc;
+  private Date doneDate;
+  private String net;
 
   private String routingType;
   private List<Sender> senders;

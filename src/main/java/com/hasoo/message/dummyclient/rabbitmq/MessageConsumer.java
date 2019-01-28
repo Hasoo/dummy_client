@@ -1,8 +1,10 @@
-package com.hasoo.sample.dummyclient.rabbitmq;
+package com.hasoo.message.dummyclient.rabbitmq;
 
 import java.io.IOException;
 import java.net.ConnectException;
-import com.hasoo.sample.dummyclient.util.Util;
+import java.util.Optional;
+import java.util.concurrent.TimeoutException;
+import com.hasoo.message.dummyclient.util.Util;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -22,6 +24,8 @@ public class MessageConsumer {
   private ConnectionFactory connectionFactory = new ConnectionFactory();
   private Channel channel = null;
 
+  private boolean alive = false;
+
   private MessageConsumer(MessageConsumerBuilder builder) {
     this.ip = builder.ip;
     this.port = builder.port;
@@ -40,6 +44,7 @@ public class MessageConsumer {
     try {
       Connection connection = connectionFactory.newConnection();
       this.channel = connection.createChannel();
+      alive = true;
       return true;
     } catch (ConnectException e) {
       log.error(e.getMessage());
@@ -49,17 +54,28 @@ public class MessageConsumer {
     return false;
   }
 
+  public boolean isAlive() {
+    return this.alive;
+  }
+
   public void consume(CallbackReceiveEvent event) throws IOException {
     boolean autoAck = false;
-    // boolean autoAck = true;
     channel.basicConsume(queueName, autoAck, new DefaultConsumer(channel) {
       @Override
       public void handleDelivery(String consumerTag, Envelope envelope,
           AMQP.BasicProperties properties, byte[] body) throws IOException {
+
         boolean isSuccess = event.receive(properties.getContentType(),
-            properties.getContentEncoding(), new String(body, properties.getContentEncoding()));
+            new String(body, Optional.ofNullable(properties.getContentEncoding()).orElse("UTF-8")));
         if (isSuccess) {
           channel.basicAck(envelope.getDeliveryTag(), false);
+        } else {
+          try {
+            alive = false;
+            channel.close();
+          } catch (TimeoutException e) {
+            log.error(Util.getStackTrace(e));
+          }
         }
       }
     });

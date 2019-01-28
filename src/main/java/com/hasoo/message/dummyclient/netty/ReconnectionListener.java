@@ -1,4 +1,4 @@
-package com.hasoo.sample.dummyclient.netty;
+package com.hasoo.message.dummyclient.netty;
 
 import java.util.concurrent.TimeUnit;
 import io.netty.bootstrap.Bootstrap;

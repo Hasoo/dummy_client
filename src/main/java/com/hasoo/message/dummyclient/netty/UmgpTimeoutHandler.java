@@ -1,4 +1,4 @@
-package com.hasoo.sample.dummyclient.netty;
+package com.hasoo.message.dummyclient.netty;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;

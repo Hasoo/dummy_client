@@ -1,15 +1,16 @@
-package com.hasoo.sample.dummyclient.service;
+package com.hasoo.message.dummyclient.common;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hasoo.sample.dummyclient.dto.SenderQue;
-import com.hasoo.sample.dummyclient.netty.UmgpClient;
-import com.hasoo.sample.dummyclient.rabbitmq.CallbackReceiveEvent;
-import com.hasoo.sample.dummyclient.rabbitmq.MessageConsumer;
-import com.hasoo.sample.dummyclient.util.Util;
+import com.hasoo.message.dummyclient.dto.SenderQue;
+import com.hasoo.message.dummyclient.netty.UmgpClient;
+import com.hasoo.message.dummyclient.rabbitmq.CallbackReceiveEvent;
+import com.hasoo.message.dummyclient.rabbitmq.MessageConsumer;
+import com.hasoo.message.dummyclient.util.Util;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -17,7 +18,6 @@ public abstract class MessageSender {
   private ObjectMapper mapper = new ObjectMapper();
   private UmgpClient umgpClient;
   private MessageConsumer messageConsumer;
-  private HashMap<String, String> props;
   private boolean idle = true;
   private int idleTimeout = 10000;
   private boolean isRunning = true;
@@ -30,19 +30,15 @@ public abstract class MessageSender {
     this.messageConsumer = messageConsumer;
   }
 
-  public void setProperty(HashMap<String, String> props) {
-    this.props = props;
-  }
-
   public void stop() {
     isRunning = false;
   }
 
-  public abstract void setup();
+  public abstract void loadConfiguration(HashMap<String, String> props);
 
   public abstract void sendPing();
 
-  public abstract boolean sendMessage(String contentType, String contentEncoding, SenderQue que);
+  public abstract boolean sendMessage(String contentType, SenderQue que);
 
   public void connect() {
     umgpClient.connect();
@@ -56,6 +52,11 @@ public abstract class MessageSender {
 
       Instant preTime = Instant.now();
       while (isRunning) {
+
+        if (true != messageConsumer.isAlive()) {
+          return true;
+        }
+
         if (idle) {
           Instant curTime = Instant.now();
           long gap = ChronoUnit.MILLIS.between(preTime, curTime);
@@ -67,7 +68,10 @@ public abstract class MessageSender {
           idle = true;
           preTime = Instant.now();
         }
-        Thread.sleep(100);
+        try {
+          TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException e) {
+        }
       }
 
       return false;
@@ -85,7 +89,7 @@ public abstract class MessageSender {
 
     messageConsumer.consume(new CallbackReceiveEvent() {
       @Override
-      public boolean receive(String contentType, String contentEncoding, String message) {
+      public boolean receive(String contentType, String message) {
         SenderQue que = null;
         try {
           que = mapper.readValue(message, SenderQue.class);
@@ -94,7 +98,7 @@ public abstract class MessageSender {
           return true; // NACK for deleting
         }
         idle = false;
-        return sendMessage(contentType, contentEncoding, que);
+        return sendMessage(contentType, que);
       }
     });
 

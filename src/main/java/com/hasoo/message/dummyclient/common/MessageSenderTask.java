@@ -1,4 +1,4 @@
-package com.hasoo.sample.dummyclient.service;
+package com.hasoo.message.dummyclient.common;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,7 +14,6 @@ public class MessageSenderTask implements Runnable {
 
   @Override
   public void run() {
-    messageSender.setup();
     messageSender.connect();
 
     while (true) {

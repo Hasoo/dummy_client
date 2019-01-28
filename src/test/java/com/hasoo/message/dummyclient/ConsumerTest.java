@@ -1,10 +1,10 @@
-package com.hasoo.sample.dummyclient;
+package com.hasoo.message.dummyclient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hasoo.sample.dummyclient.dto.SenderQue;
+import com.hasoo.message.dummyclient.dto.SenderQue;
 
 public class ConsumerTest {
   ObjectMapper mapper = new ObjectMapper();

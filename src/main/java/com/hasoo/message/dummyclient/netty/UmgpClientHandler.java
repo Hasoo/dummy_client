@@ -1,8 +1,8 @@
-package com.hasoo.sample.dummyclient.netty;
+package com.hasoo.message.dummyclient.netty;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
-import com.hasoo.sample.dummyclient.util.Util;
+import com.hasoo.message.dummyclient.util.Util;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -39,14 +39,15 @@ public class UmgpClientHandler extends ChannelInboundHandlerAdapter {
     if (byteBuf.isReadable()) {
       String line = byteBuf.toString(Charset.defaultCharset());
       line = line.trim();
-      log.debug(Util.dump(line));
-      // umgpWorker.receive(ctx.channel(), line);
+      // log.debug(Util.dump(line));
+      umgpClient.receive(ctx.channel(), line);
     }
   }
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
     log.info("connection established {}", ctx.toString());
+    umgpClient.sendConnect();
     super.channelActive(ctx);
   }
 
