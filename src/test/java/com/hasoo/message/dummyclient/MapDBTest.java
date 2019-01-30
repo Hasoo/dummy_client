@@ -1,6 +1,5 @@
 package com.hasoo.message.dummyclient;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -14,12 +13,12 @@ import org.mapdb.DBMaker;
 import org.mapdb.DataInput2;
 import org.mapdb.DataOutput2;
 import org.mapdb.Serializer;
+import com.hasoo.message.dummyclient.dto.SenderQue;
 import com.hasoo.message.dummyclient.util.Util;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-public class MapDBTest implements Serializable {
-  private static final long serialVersionUID = 677586736586749317L;
+public class MapDBTest {
 
   @Data
   @AllArgsConstructor
@@ -81,5 +80,24 @@ public class MapDBTest implements Serializable {
     Assertions.assertFalse(map.containsKey(aName));
 
     db.close();
+  }
+
+  @Test
+  public void testSerializeByte() throws IOException, ClassNotFoundException {
+
+    DB db = DBMaker.fileDB(file).fileMmapEnable().make();
+
+    Map<String, byte[]> map = db.hashMap("map").keySerializer(Serializer.STRING)
+        .valueSerializer(Serializer.BYTE_ARRAY).createOrOpen();
+
+    SenderQue que = new SenderQue();
+    que.setMsgKey("1");
+    que.setMessage("test");
+
+    map.put("1", Util.serializeObj(que));
+
+    SenderQue desQue = (SenderQue) Util.deserializedObj(map.get("1"));
+
+    Assertions.assertEquals("test", desQue.getMessage());
   }
 }

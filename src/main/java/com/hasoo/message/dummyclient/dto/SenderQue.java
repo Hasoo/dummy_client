@@ -1,5 +1,6 @@
 package com.hasoo.message.dummyclient.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SenderQue {
+public class SenderQue implements Serializable {
+  private static final long serialVersionUID = 1L;
   private String msgKey;
   private String userKey;
   private String groupname;

@@ -1,8 +1,11 @@
 package com.hasoo.message.dummyclient.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
@@ -51,5 +54,27 @@ public class Util {
 
   public static String getCurrentDate12() {
     return new SimpleDateFormat("yyyyMMddHHmm").format(new Date());
+  }
+
+  public static byte[] serializeObj(Object obj) throws IOException {
+    byte[] serialized = null;
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      try (ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+        // not able to serialize inner class, so Human class is not
+        oos.writeObject(obj);
+        serialized = baos.toByteArray();
+      }
+    }
+    return serialized;
+  }
+
+  public static Object deserializedObj(byte[] b) throws IOException, ClassNotFoundException {
+    Object o = null;
+    try (ByteArrayInputStream bais = new ByteArrayInputStream(b)) {
+      try (ObjectInputStream ois = new ObjectInputStream(bais)) {
+        o = ois.readObject();
+      }
+    }
+    return o;
   }
 }
