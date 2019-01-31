@@ -115,7 +115,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>com.hasoo.message.dummyclient.App</mainClass>
+									<mainClass>com.hasoo.dummyclient.App</mainClass>
 								</transformer>
 							</transformers>
 							<filters>
