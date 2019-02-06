@@ -1,5 +1,8 @@
 package com.hasoo.dummyclient;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -15,43 +18,84 @@ import com.hasoo.dummyclient.netty.NettyClient;
 import com.hasoo.dummyclient.umgp.UmgpMessageMerger;
 import com.hasoo.dummyclient.umgp.UmgpMessageReceiver;
 import com.hasoo.dummyclient.umgp.UmgpMessageSender;
+import com.hasoo.dummyclient.util.HUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class App {
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
+    final String propFilename = "./cfg/application.properties";
+    Properties prop = HUtil.getProperties(propFilename);
+
+    String umgpIp = prop.getProperty("umgp.server.ip");
+    String umgpPort = prop.getProperty("umgp.server.port");
+    String umgpUsername = prop.getProperty("umgp.server.username");
+    String umgpPassword = prop.getProperty("umgp.server.password");
+    String umgpTimeout = prop.getProperty("umgp.server.timeout");
+
+    log.info("umgp ip:{} port:{} username:{} password:{} timeout:{}", umgpIp, umgpPort,
+        umgpUsername, umgpPassword, umgpTimeout);
+
+    String rabbitmqIp = prop.getProperty("rabbitmq.ip");
+    String rabbitmqPort = prop.getProperty("rabbitmq.port");
+    String rabbitmqUsername = prop.getProperty("rabbitmq.username");
+    String rabbitmqPassword = prop.getProperty("rabbitmq.password");
+    String rabbitmqExchange = prop.getProperty("rabbitmq.exchange_name");
+    String rabbitmqRouting = prop.getProperty("rabbitmq.routing_key");
+    String rabbitmqQueue = prop.getProperty("rabbitmq.queue_name");
+
+    log.info(
+        "rabbitmq ip:{} port:{} username:{} password:{} exchange_name:{} routing_key:{} queue_name:{}",
+        rabbitmqIp, rabbitmqPort, rabbitmqUsername, rabbitmqPassword, rabbitmqExchange,
+        rabbitmqRouting, rabbitmqQueue);
+
     ExecutorService executor = Executors.newCachedThreadPool();
 
-    NettyClient umgpSenderClient_1 = NettyClient.builder().ip("127.0.0.1").port(4000)
-        .username("test").password("test").reportline("N").build();
+    /* @formatter:off */
+    NettyClient umgpSenderClient_1 = NettyClient.builder()
+        .ip(umgpIp)
+        .port(Integer.parseInt(umgpPort))
+        .username(umgpUsername)
+        .password(umgpPassword)
+        .reportline("N")
+        .build();
+    /* @formatter:on */
 
-    NettyClient umgpReceiverClient_1 = NettyClient.builder().ip("127.0.0.1").port(4000)
-        .username("test").password("test").reportline("Y").build();
+    /* @formatter:off */
+    NettyClient umgpReceiverClient_1 = NettyClient.builder()
+        .ip(umgpIp)
+        .port(Integer.parseInt(umgpPort))
+        .username(umgpUsername)
+        .password(umgpPassword)
+        .reportline("Y")
+        .build();
+    /* @formatter:on */
 
     /* @formatter:off */
     MessageConsumer messageConsumer_1 = MessageConsumer.builder()
-        .ip("127.0.0.1")
-        .port(5672)
-        .username("test")
-        .password("test")
-        .queueName("LGT_1")
+        .ip(rabbitmqIp)
+        .port(Integer.parseInt(rabbitmqPort))
+        .username(rabbitmqUsername)
+        .password(rabbitmqPassword)
+        .queueName(rabbitmqQueue)
         .build();
     /* @formatter:on */
 
     /* @formatter:off */
     MessagePublisher messagePublisher_1 = MessagePublisher.builder()
-        .ip("127.0.0.1")
-        .port(5672)
-        .username("test")
-        .password("test")
-        .exchange("amq.direct")
-        .routingKey("router")
+        .ip(rabbitmqIp)
+        .port(Integer.parseInt(rabbitmqPort))
+        .username(rabbitmqUsername)
+        .password(rabbitmqPassword)
+        .exchange(rabbitmqExchange)
+        .routingKey(rabbitmqRouting)
         .build();
     /* @formatter:on */
 
     MessageSender messageSender_1 = new UmgpMessageSender(umgpSenderClient_1, messageConsumer_1);
     MessageReceiver messageReceiver_1 = new UmgpMessageReceiver(umgpReceiverClient_1);
-    MessageMerger messageMerger_1 = new UmgpMessageMerger(messagePublisher_1, 1000 * 60 * 60 * 80);
+    MessageMerger messageMerger_1 =
+        new UmgpMessageMerger(messagePublisher_1, 1000 * 60 * 60 * Integer.parseInt(umgpTimeout));
     // messageSender_1.setProperty(props);
 
     executor.execute(new MessageSenderTask(messageSender_1));
@@ -85,7 +129,7 @@ public class App {
 
     while (true) {
       try {
-        TimeUnit.SECONDS.sleep(1);
+        TimeUnit.SECONDS.sleep(5);
       } catch (InterruptedException e) {
       }
     }

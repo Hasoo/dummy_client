@@ -74,6 +74,7 @@ public abstract class MessageSender {
         } catch (InterruptedException e) {
         }
       }
+      log.debug("exited");
 
       return false; // exit
     } catch (Exception e) {

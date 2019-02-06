@@ -3,6 +3,8 @@ package com.hasoo.dummyclient.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,6 +17,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import org.apache.commons.io.HexDump;
 
 public class HUtil {
@@ -86,5 +89,14 @@ public class HUtil {
     } catch (ParseException e) {
     }
     return null;
+  }
+
+  public static Properties getProperties(String filename)
+      throws FileNotFoundException, IOException {
+    final Properties properties = new Properties();
+    try (final FileInputStream fis = new FileInputStream(filename)) {
+      properties.load(fis);
+    }
+    return properties;
   }
 }

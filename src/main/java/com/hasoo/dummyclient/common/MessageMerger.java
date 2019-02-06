@@ -66,6 +66,7 @@ public abstract class MessageMerger {
 
         process(que);
       }
+      log.debug("exited");
 
       return false; // exit
     } catch (Exception e) {

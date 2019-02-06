@@ -61,6 +61,7 @@ public abstract class MessageReceiver {
         } catch (InterruptedException e) {
         }
       }
+      log.debug("exited");
 
       return false;
     } catch (Exception e) {

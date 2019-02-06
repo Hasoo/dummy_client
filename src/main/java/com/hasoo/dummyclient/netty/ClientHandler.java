@@ -42,6 +42,7 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
       // log.debug(Util.dump(line));
       umgpClient.receive(ctx.channel(), line);
     }
+    byteBuf.release();
   }
 
   @Override

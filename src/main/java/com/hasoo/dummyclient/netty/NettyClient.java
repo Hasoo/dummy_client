@@ -111,9 +111,16 @@ public class NettyClient {
         } else if (Umgp.HType.REPORT == headerType) {
           log.debug("<- {} key:{} code:{} data:{} date:{} net:{}", Umgp.REPORT, umgp.getKey(),
               umgp.getCode(), umgp.getData().toString(), umgp.getDate(), umgp.getNet());
-          messageReceiver.receiveReport(new SenderQue(umgp.getKey(), null, null, null, null, null,
-              null, null, null, null, umgp.getCode(), umgp.getData().toString(),
-              HUtil.getDate14(umgp.getDate()), umgp.getNet(), null, null));
+          /* @formatter:off */
+          messageReceiver.receiveReport(
+              SenderQue.builder()
+                .msgKey(umgp.getKey())
+                .code(umgp.getCode())
+                .desc(umgp.getData().toString())
+                .doneDate(HUtil.getDate14(umgp.getDate()))
+                .net(umgp.getNet())
+                .build());
+          /* @formatter:off */
           receivedReport = true;
           sendAck(umgp.getKey(), "100", "Success");
         } else if (Umgp.HType.PONG == headerType) {
