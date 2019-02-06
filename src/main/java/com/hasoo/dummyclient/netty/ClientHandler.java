@@ -2,7 +2,6 @@ package com.hasoo.dummyclient.netty;
 
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
-import com.hasoo.dummyclient.util.HUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -36,13 +35,16 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     ByteBuf byteBuf = (ByteBuf) msg;
-    if (byteBuf.isReadable()) {
-      String line = byteBuf.toString(Charset.defaultCharset());
-      line = line.trim();
-      // log.debug(Util.dump(line));
-      umgpClient.receive(ctx.channel(), line);
+    try {
+      if (byteBuf.isReadable()) {
+        String line = byteBuf.toString(Charset.defaultCharset());
+        line = line.trim();
+        // log.debug(Util.dump(line));
+        umgpClient.receive(ctx.channel(), line);
+      }
+    } finally {
+      byteBuf.release();
     }
-    byteBuf.release();
   }
 
   @Override
