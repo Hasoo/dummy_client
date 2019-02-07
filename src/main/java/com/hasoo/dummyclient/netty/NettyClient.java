@@ -112,12 +112,14 @@ public class NettyClient {
           log.debug("<- {} key:{} code:{} data:{} date:{} net:{}", Umgp.REPORT, umgp.getKey(),
               umgp.getCode(), umgp.getData().toString(), umgp.getDate(), umgp.getNet());
           /* @formatter:off */
+          String netRslt = umgp.getCode()+umgp.getData().toString();
+          String rsltCode = messageReceiver.convertNetRslt(netRslt);
           messageReceiver.receiveReport(
               SenderQue.builder()
                 .msgKey(umgp.getKey())
-                .code(umgp.getCode())
-                .desc(umgp.getData().toString())
-                .doneDate(HUtil.getDate14(umgp.getDate()))
+                .code(rsltCode)
+                .desc(netRslt)
+                .doneDate(HUtil.getDate12(umgp.getDate()))
                 .net(umgp.getNet())
                 .build());
           /* @formatter:off */

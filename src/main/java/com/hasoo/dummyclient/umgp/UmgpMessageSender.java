@@ -5,7 +5,6 @@ import com.hasoo.dummyclient.common.MessageSender;
 import com.hasoo.dummyclient.common.dto.SenderQue;
 import com.hasoo.dummyclient.common.rabbitmq.MessageConsumer;
 import com.hasoo.dummyclient.netty.NettyClient;
-import lombok.extern.slf4j.Slf4j;
 
 public class UmgpMessageSender extends MessageSender {
   private NettyClient nettyClient;

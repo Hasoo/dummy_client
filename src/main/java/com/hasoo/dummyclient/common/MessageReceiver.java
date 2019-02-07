@@ -29,6 +29,8 @@ public abstract class MessageReceiver {
 
   public abstract void sendPing();
 
+  public abstract String convertNetRslt(String code);
+
   public void stop() {
     isRunning = false;
   }

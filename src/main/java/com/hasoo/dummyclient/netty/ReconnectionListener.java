@@ -1,7 +1,6 @@
 package com.hasoo.dummyclient.netty;
 
 import java.util.concurrent.TimeUnit;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoop;

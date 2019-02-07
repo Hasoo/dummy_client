@@ -1,8 +1,7 @@
 package com.hasoo.dummyclient.common;
 
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hasoo.dummyclient.common.dto.SenderQue;
@@ -61,6 +60,11 @@ public abstract class MessageMerger {
             }
           }, expiredTimeout);
 
+          try {
+            TimeUnit.MILLISECONDS.sleep(10);
+          } catch (InterruptedException e) {
+          }
+
           continue;
         }
 
@@ -88,7 +92,9 @@ public abstract class MessageMerger {
     }
 
     try {
-      messagePublisher.publish(mapper.writeValueAsString(merge(storedQue, que)));
+      SenderQue mergedQue = merge(storedQue, que);
+      log.debug("mergedQue:{}", mergedQue.toString());
+      messagePublisher.publish(mapper.writeValueAsString(mergedQue));
     } catch (JsonProcessingException e) {
       log.error(HUtil.getStackTrace(e));
     }

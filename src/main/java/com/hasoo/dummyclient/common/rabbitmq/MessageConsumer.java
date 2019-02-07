@@ -3,7 +3,6 @@ package com.hasoo.dummyclient.common.rabbitmq;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Optional;
-import java.util.concurrent.TimeoutException;
 import com.hasoo.dummyclient.util.HUtil;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;

@@ -1,7 +1,6 @@
 package com.hasoo.dummyclient;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
