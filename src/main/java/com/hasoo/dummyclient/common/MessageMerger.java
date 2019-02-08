@@ -83,7 +83,8 @@ public abstract class MessageMerger {
   private void process(SenderQue que) {
     SenderQue storedQue = find(que.getMsgKey());
     if (null == storedQue) {
-      if (null != que.getCode()) { // if a key of sent message is empty, throw away report.
+      if (null == que.getUsername()) { // throw away que because it's report.
+        log.info("failed to merge {}", que.toString());
         return;
       }
 

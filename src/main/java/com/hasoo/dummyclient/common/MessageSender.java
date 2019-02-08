@@ -3,6 +3,7 @@ package com.hasoo.dummyclient.common;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -101,6 +102,7 @@ public abstract class MessageSender {
         }
         idle = false;
         if (sendMessage(contentType, que)) {
+          que.setSentDate(new Date());
           mergeQueue.push(que);
           return true;
         }

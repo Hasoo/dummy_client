@@ -18,7 +18,9 @@ public class SenderQue implements Serializable {
   private String userKey;
   private String groupname;
   private String username;
+  private Double fee;
   private Date resDate;
+  private Date sentDate;
   private String msgType;
   private String contentType;
   private String phone;
