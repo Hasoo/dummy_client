@@ -14,7 +14,7 @@ import com.hasoo.dummyclient.common.MessageSenderTask;
 import com.hasoo.dummyclient.common.rabbitmq.MessageConsumer;
 import com.hasoo.dummyclient.common.rabbitmq.MessagePublisher;
 import com.hasoo.dummyclient.netty.NettyClient;
-import com.hasoo.dummyclient.umgp.UmgpMessageMerger;
+import com.hasoo.dummyclient.umgp.H2MessageMerger;
 import com.hasoo.dummyclient.umgp.UmgpMessageReceiver;
 import com.hasoo.dummyclient.umgp.UmgpMessageSender;
 import com.hasoo.dummyclient.util.HUtil;
@@ -94,7 +94,7 @@ public class App {
     MessageSender messageSender_1 = new UmgpMessageSender(umgpSenderClient_1, messageConsumer_1);
     MessageReceiver messageReceiver_1 = new UmgpMessageReceiver(umgpReceiverClient_1);
     MessageMerger messageMerger_1 =
-        new UmgpMessageMerger(messagePublisher_1, 1000 * 60 * 60 * Integer.parseInt(umgpTimeout));
+        new H2MessageMerger(messagePublisher_1, 1000 * 60 * 60 * Integer.parseInt(umgpTimeout));
     // messageSender_1.setProperty(props);
 
     executor.execute(new MessageSenderTask(messageSender_1));

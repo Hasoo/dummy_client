@@ -14,11 +14,11 @@ import com.hasoo.dummyclient.util.HUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class UmgpMessageMerger extends MessageMerger {
+public class MapDBMessageMerger extends MessageMerger {
   private DB db;
   private Map<String, byte[]> mergeMap;
 
-  public UmgpMessageMerger(MessagePublisher messagePublisher, int expiredTimeout) {
+  public MapDBMessageMerger(MessagePublisher messagePublisher, int expiredTimeout) {
     super(messagePublisher, expiredTimeout);
     db = DBMaker.fileDB(HUtil.getFilePath("./db", "merge.db").toFile()).fileMmapEnable()
         .checksumHeaderBypass().make();
