@@ -58,7 +58,7 @@ public class MapDBTest {
     }
   }
 
-  @Test
+  // @Test
   public void testHashMap() {
 
     DB db = DBMaker.fileDB(file).fileMmapEnable().make();
@@ -82,7 +82,7 @@ public class MapDBTest {
     db.close();
   }
 
-  @Test
+  // @Test
   public void testSerializeByte() throws IOException, ClassNotFoundException {
 
     DB db = DBMaker.fileDB(file).fileMmapEnable().make();
