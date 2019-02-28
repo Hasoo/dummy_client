@@ -157,7 +157,7 @@ public class H2MessageMerger extends MessageMerger {
     try {
       Class.forName(DB_DRIVER);
     } catch (ClassNotFoundException e) {
-      System.out.println(e.getMessage());
+      log.error(HUtil.getStackTrace(e));
     }
     try {
       if (null == connection) {
