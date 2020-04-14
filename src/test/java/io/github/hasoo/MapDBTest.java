@@ -7,6 +7,7 @@ import lombok.Data;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mapdb.*;
 
 import java.io.File;
@@ -54,7 +55,7 @@ public class MapDBTest {
     }
   }
 
-  // @Test
+  @Test
   public void testHashMap() {
 
     DB db = DBMaker.fileDB(file).fileMmapEnable().make();
